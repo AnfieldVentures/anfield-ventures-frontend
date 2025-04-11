@@ -15,10 +15,27 @@ export const Navbar = () => {
     return location.pathname === path;
   };
 
+  const scrollToSection = (sectionId: string) => {
+    // Close mobile menu if open
+    setIsOpen(false);
+    
+    // If we're on the homepage, scroll to the section
+    if (location.pathname === '/') {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // If we're not on the homepage, navigate to homepage and then scroll
+      // We add the section as a hash to the URL
+      window.location.href = `/#${sectionId}`;
+    }
+  };
+
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Plans", path: "/plans" },
+    { name: "About", action: () => scrollToSection("about-section") },
+    { name: "Plans", action: () => scrollToSection("plans-section") },
   ];
 
   return (
@@ -35,17 +52,27 @@ export const Navbar = () => {
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-4">
               {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    isActive(link.path)
-                      ? "text-anfield-primary dark:text-anfield-accent font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-anfield-primary dark:hover:text-anfield-accent"
-                  }`}
-                >
-                  {link.name}
-                </Link>
+                link.path ? (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    className={`px-3 py-2 rounded-md text-sm font-medium ${
+                      isActive(link.path)
+                        ? "text-anfield-primary dark:text-anfield-accent font-semibold"
+                        : "text-gray-700 dark:text-gray-300 hover:text-anfield-primary dark:hover:text-anfield-accent"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                ) : (
+                  <button
+                    key={link.name}
+                    onClick={link.action}
+                    className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-anfield-primary dark:hover:text-anfield-accent"
+                  >
+                    {link.name}
+                  </button>
+                )
               ))}
               
               <div className="ml-4">
@@ -94,18 +121,28 @@ export const Navbar = () => {
         <div className="md:hidden bg-white dark:bg-gray-900 shadow-md">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  isActive(link.path)
-                    ? "text-anfield-primary dark:text-anfield-accent font-semibold"
-                    : "text-gray-700 dark:text-gray-300"
-                }`}
-                onClick={() => setIsOpen(false)}
-              >
-                {link.name}
-              </Link>
+              link.path ? (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className={`block px-3 py-2 rounded-md text-base font-medium ${
+                    isActive(link.path)
+                      ? "text-anfield-primary dark:text-anfield-accent font-semibold"
+                      : "text-gray-700 dark:text-gray-300"
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ) : (
+                <button
+                  key={link.name}
+                  onClick={link.action}
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300"
+                >
+                  {link.name}
+                </button>
+              )
             ))}
             
             {isAuthenticated ? (

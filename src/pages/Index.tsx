@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "../components/Navbar";
@@ -93,8 +92,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Features Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
+      {/* Features Section - About Section */}
+      <section id="about-section" className="py-16 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl font-bold mb-4">Why Choose Anfield Ventures?</h2>
@@ -137,8 +136,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Investment Plans Preview */}
-      <section className="py-16 bg-white dark:bg-gray-900">
+      {/* Investment Plans Preview - Plans Section */}
+      <section id="plans-section" className="py-16 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl font-bold mb-4">Our Investment Plans</h2>
@@ -218,12 +217,19 @@ const Index = () => {
           </div>
           
           <div className="text-center mt-12">
-            <Link to="/plans">
-              <Button variant="outline" className="flex items-center">
-                <span>View All Plans</span>
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            <Button 
+              variant="outline" 
+              className="flex items-center mx-auto"
+              onClick={() => {
+                const plansSection = document.getElementById("plans-section");
+                if (plansSection) {
+                  plansSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
+              <span>View All Plans</span>
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </div>
       </section>
