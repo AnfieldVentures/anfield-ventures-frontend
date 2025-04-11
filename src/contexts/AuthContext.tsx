@@ -46,14 +46,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
   
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (name: string, email: string, password: string): Promise<void> => {
     try {
       const newUser = registerUser(name, email, password);
       toast({
         title: "Registration successful",
         description: "Your account has been created. Please log in.",
       });
-      return newUser;
+      // We don't return the user, just to match the Promise<void> type
     } catch (error: any) {
       toast({
         variant: "destructive",
