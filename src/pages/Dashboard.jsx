@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext.js';
+import { useAuth } from '../contexts/AuthContext.jsx';
 import { getUserInvestments, getUserTransactions } from '../utils/storage.js';
 import { StatCard } from '../components/StatCard.jsx';
 import { TransactionList } from '../components/TransactionList.jsx';
