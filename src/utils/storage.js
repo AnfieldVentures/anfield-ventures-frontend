@@ -3,6 +3,8 @@
 const USER_KEY = 'anfield_ventures_user';
 const USERS_KEY = 'anfield_ventures_users';
 const THEME_KEY = 'anfield_ventures_theme';
+const INVESTMENTS_KEY = 'anfield_ventures_investments';
+const TRANSACTIONS_KEY = 'anfield_ventures_transactions';
 
 // Theme functions
 export const getTheme = () => {
@@ -70,6 +72,66 @@ const getUsers = () => {
   return usersJson ? JSON.parse(usersJson) : [];
 };
 
+// Investments functions
+export const getUserInvestments = (userId) => {
+  const investmentsJson = localStorage.getItem(INVESTMENTS_KEY);
+  const investments = investmentsJson ? JSON.parse(investmentsJson) : [];
+  return investments.filter(investment => investment.userId === userId);
+};
+
+export const createInvestment = (userId, plan, amount) => {
+  const investmentsJson = localStorage.getItem(INVESTMENTS_KEY);
+  const investments = investmentsJson ? JSON.parse(investmentsJson) : [];
+  
+  // Calculate return rate based on plan
+  const returnRate = plan === 'daily' ? 1.2 : 7.5;
+  
+  const newInvestment = {
+    id: generateId(),
+    userId,
+    plan,
+    amount,
+    returnRate,
+    status: 'active',
+    startDate: new Date().toISOString(),
+    endDate: null
+  };
+  
+  investments.push(newInvestment);
+  localStorage.setItem(INVESTMENTS_KEY, JSON.stringify(investments));
+  
+  // Create transaction entry for this investment
+  createTransaction(userId, 'investment', amount, `New ${plan} investment`);
+  
+  return newInvestment;
+};
+
+// Transactions functions
+export const getUserTransactions = (userId) => {
+  const transactionsJson = localStorage.getItem(TRANSACTIONS_KEY);
+  const transactions = transactionsJson ? JSON.parse(transactionsJson) : [];
+  return transactions.filter(transaction => transaction.userId === userId);
+};
+
+export const createTransaction = (userId, type, amount, description) => {
+  const transactionsJson = localStorage.getItem(TRANSACTIONS_KEY);
+  const transactions = transactionsJson ? JSON.parse(transactionsJson) : [];
+  
+  const newTransaction = {
+    id: generateId(),
+    userId,
+    type, // 'deposit', 'withdrawal', 'investment', 'return'
+    amount,
+    description,
+    date: new Date().toISOString()
+  };
+  
+  transactions.push(newTransaction);
+  localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
+  
+  return newTransaction;
+};
+
 // Helper functions
 const generateId = () => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -101,8 +163,108 @@ export const initializeLocalStorage = () => {
     localStorage.setItem(USERS_KEY, JSON.stringify(sampleUsers));
   }
   
+  // Initialize investments if not already done
+  if (!localStorage.getItem(INVESTMENTS_KEY)) {
+    const sampleInvestments = [
+      {
+        id: 'inv1',
+        userId: 'user1',
+        plan: 'daily',
+        amount: 1000,
+        returnRate: 1.2,
+        status: 'active',
+        startDate: '2023-03-15T00:00:00.000Z',
+        endDate: null
+      },
+      {
+        id: 'inv2',
+        userId: 'user1',
+        plan: 'weekly',
+        amount: 5000,
+        returnRate: 7.5,
+        status: 'active',
+        startDate: '2023-03-01T00:00:00.000Z',
+        endDate: null
+      }
+    ];
+    
+    localStorage.setItem(INVESTMENTS_KEY, JSON.stringify(sampleInvestments));
+  }
+  
+  // Initialize transactions if not already done
+  if (!localStorage.getItem(TRANSACTIONS_KEY)) {
+    const sampleTransactions = [
+      {
+        id: 'trans1',
+        userId: 'user1',
+        type: 'deposit',
+        amount: 10000,
+        description: 'Initial deposit',
+        date: '2023-03-01T00:00:00.000Z'
+      },
+      {
+        id: 'trans2',
+        userId: 'user1',
+        type: 'investment',
+        amount: 5000,
+        description: 'Weekly investment plan',
+        date: '2023-03-01T00:00:00.000Z'
+      },
+      {
+        id: 'trans3',
+        userId: 'user1',
+        type: 'investment',
+        amount: 1000,
+        description: 'Daily investment plan',
+        date: '2023-03-15T00:00:00.000Z'
+      },
+      {
+        id: 'trans4',
+        userId: 'user1',
+        type: 'return',
+        amount: 375,
+        description: 'Weekly plan returns',
+        date: '2023-03-08T00:00:00.000Z'
+      },
+      {
+        id: 'trans5',
+        userId: 'user1',
+        type: 'return',
+        amount: 84,
+        description: 'Daily plan returns',
+        date: '2023-03-22T00:00:00.000Z'
+      }
+    ];
+    
+    localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(sampleTransactions));
+  }
+  
   // Set default theme if not set
   if (!localStorage.getItem(THEME_KEY)) {
     localStorage.setItem(THEME_KEY, 'light');
   }
 };
+
+// Add TypeScript-like definitions for JavaScript
+// This is just for documentation purposes now that we're using JavaScript
+/*
+export const Investment = {
+  id: String,
+  userId: String,
+  plan: String, // 'daily' or 'weekly'
+  amount: Number,
+  returnRate: Number,
+  status: String, // 'active' or 'completed'
+  startDate: String, // ISO string
+  endDate: String // ISO string or null
+};
+
+export const Transaction = {
+  id: String,
+  userId: String,
+  type: String, // 'deposit', 'withdrawal', 'investment', 'return'
+  amount: Number,
+  description: String,
+  date: String // ISO string
+};
+*/

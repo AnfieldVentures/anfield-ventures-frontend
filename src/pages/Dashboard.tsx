@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
-import { getUserInvestments, getUserTransactions, Investment, Transaction } from "../utils/storage";
+import { getUserInvestments, getUserTransactions } from "../utils/storage";
 import { StatCard } from "../components/StatCard";
 import { TransactionList } from "../components/TransactionList";
 import { InvestmentCard } from "../components/InvestmentCard";
@@ -30,8 +29,8 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recha
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const [investments, setInvestments] = useState<Investment[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [investments, setInvestments] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [totalBalance, setTotalBalance] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
   
