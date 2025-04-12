@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import Plans from "./pages/Plans.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 // Create a client
@@ -31,6 +32,7 @@ const App = () => {
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+                  <Route path="/plans" element={<Plans />} />
                   <Route
                     path="/dashboard"
                     element={

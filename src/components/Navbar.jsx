@@ -1,8 +1,8 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import { ThemeToggle } from "./ThemeToggle";
+import { useAuth } from "../contexts/AuthContext.jsx";
+import { ThemeToggle } from "./ThemeToggle.jsx";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
@@ -32,10 +32,14 @@ export const Navbar = () => {
     }
   };
 
+  // Define available routes and sections
+  const availableRoutes = ['/', '/login', '/register', '/dashboard', '/plans'];
+  const availableSections = ['about-section', 'plans-section'];
+
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "About", action: () => scrollToSection("about-section") },
-    { name: "Plans", action: () => scrollToSection("plans-section") },
+    { name: "Plans", path: "/plans" },
   ];
 
   return (
