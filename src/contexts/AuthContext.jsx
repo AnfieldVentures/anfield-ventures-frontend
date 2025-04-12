@@ -1,32 +1,95 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getCurrentUser, loginUser, logoutUser, registerUser } from '../utils/storage.js';
 import { useToast } from '../hooks/use-toast.js';
+import { supabase } from '../integrations/supabase/client.js';
 
+// Create Auth Context
 const AuthContext = createContext(undefined);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   
+  // Check active session and fetch user profile on initial load
   useEffect(() => {
-    // Check if user is already logged in
-    const storedUser = getCurrentUser();
-    if (storedUser) {
-      setUser(storedUser);
-    }
-    setIsLoading(false);
+    const checkSession = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Check if user is already authenticated
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+          const { user } = session;
+          setUser(user);
+          
+          // Fetch user profile data
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+            
+          setProfile(profile);
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkSession();
+    
+    // Set up listener for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event);
+      
+      if (session) {
+        setUser(session.user);
+        
+        // Fetch updated profile data
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+          
+        setProfile(profile);
+      } else {
+        setUser(null);
+        setProfile(null);
+      }
+      
+      setIsLoading(false);
+    });
+    
+    // Cleanup subscription
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
   
+  // Login function
   const login = async (email, password) => {
     try {
-      const loggedInUser = loginUser(email, password);
-      setUser(loggedInUser);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
       toast({
         title: "Login successful",
-        description: `Welcome back, ${loggedInUser.name}!`,
+        description: "Welcome back!",
       });
+      
+      return data;
     } catch (error) {
       toast({
         variant: "destructive",
@@ -37,14 +100,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
+  // Register function
   const register = async (name, email, password) => {
     try {
-      const newUser = registerUser(name, email, password);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+          },
+        },
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
       toast({
         title: "Registration successful",
-        description: "Your account has been created. Please log in.",
+        description: "Your account has been created. Please check your email for verification.",
       });
-      // We don't return the user, just to match the Promise<void> type
+      
+      return data;
     } catch (error) {
       toast({
         variant: "destructive",
@@ -55,19 +133,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
-  const logout = () => {
-    logoutUser();
-    setUser(null);
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    });
+  // Logout function
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+      
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Logout failed",
+        description: error.message || "Something went wrong",
+      });
+    }
   };
   
   return (
     <AuthContext.Provider 
       value={{ 
         user, 
+        profile,
         isAuthenticated: !!user,
         isLoading,
         login, 
