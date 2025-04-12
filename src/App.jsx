@@ -13,6 +13,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Plans from "./pages/Plans.jsx";
+import About from "./pages/About.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 // Create a client
@@ -33,6 +34,7 @@ const App = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/plans" element={<Plans />} />
+                  <Route path="/about" element={<About />} />
                   <Route
                     path="/dashboard"
                     element={
