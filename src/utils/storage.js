@@ -123,7 +123,8 @@ export const createTransaction = (userId, type, amount, description) => {
     type, // 'deposit', 'withdrawal', 'investment', 'return'
     amount,
     description,
-    date: new Date().toISOString()
+    date: new Date().toISOString(),
+    status: 'completed' // Default status
   };
   
   transactions.push(newTransaction);
@@ -200,7 +201,8 @@ export const initializeLocalStorage = () => {
         type: 'deposit',
         amount: 10000,
         description: 'Initial deposit',
-        date: '2023-03-01T00:00:00.000Z'
+        date: '2023-03-01T00:00:00.000Z',
+        status: 'completed'
       },
       {
         id: 'trans2',
@@ -208,7 +210,8 @@ export const initializeLocalStorage = () => {
         type: 'investment',
         amount: 5000,
         description: 'Weekly investment plan',
-        date: '2023-03-01T00:00:00.000Z'
+        date: '2023-03-01T00:00:00.000Z',
+        status: 'completed'
       },
       {
         id: 'trans3',
@@ -216,7 +219,8 @@ export const initializeLocalStorage = () => {
         type: 'investment',
         amount: 1000,
         description: 'Daily investment plan',
-        date: '2023-03-15T00:00:00.000Z'
+        date: '2023-03-15T00:00:00.000Z',
+        status: 'completed'
       },
       {
         id: 'trans4',
@@ -224,7 +228,8 @@ export const initializeLocalStorage = () => {
         type: 'return',
         amount: 375,
         description: 'Weekly plan returns',
-        date: '2023-03-08T00:00:00.000Z'
+        date: '2023-03-08T00:00:00.000Z',
+        status: 'completed'
       },
       {
         id: 'trans5',
@@ -232,7 +237,8 @@ export const initializeLocalStorage = () => {
         type: 'return',
         amount: 84,
         description: 'Daily plan returns',
-        date: '2023-03-22T00:00:00.000Z'
+        date: '2023-03-22T00:00:00.000Z',
+        status: 'completed'
       }
     ];
     
@@ -244,27 +250,3 @@ export const initializeLocalStorage = () => {
     localStorage.setItem(THEME_KEY, 'light');
   }
 };
-
-// Add TypeScript-like definitions for JavaScript
-// This is just for documentation purposes now that we're using JavaScript
-/*
-export const Investment = {
-  id: String,
-  userId: String,
-  plan: String, // 'daily' or 'weekly'
-  amount: Number,
-  returnRate: Number,
-  status: String, // 'active' or 'completed'
-  startDate: String, // ISO string
-  endDate: String // ISO string or null
-};
-
-export const Transaction = {
-  id: String,
-  userId: String,
-  type: String, // 'deposit', 'withdrawal', 'investment', 'return'
-  amount: Number,
-  description: String,
-  date: String // ISO string
-};
-*/

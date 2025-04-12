@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { getCurrentUser, loginUser, logoutUser, registerUser } from '../utils/storage.js';
-import { useToast } from '../hooks/use-toast';
+import { useToast } from '../hooks/use-toast.js';
 
 const AuthContext = createContext(undefined);
 
