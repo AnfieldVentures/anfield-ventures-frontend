@@ -6,6 +6,16 @@ export const initializeLocalStorage = () => {
   console.log("Using Supabase for data storage");
 };
 
+// Theme utility functions
+export const getTheme = () => {
+  const theme = localStorage.getItem('theme');
+  return theme || 'light'; // Default to light if no theme is set
+};
+
+export const setTheme = (theme) => {
+  localStorage.setItem('theme', theme);
+};
+
 // Example query function for fetching user data
 export const getUserProfile = async (userId) => {
   try {
