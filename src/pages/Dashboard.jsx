@@ -187,25 +187,28 @@ const Dashboard = () => {
               />
             </div>
             
-            {/* Deposit Button with Wallet Address */}
+            {/* Deposit Button with Wallet Address - Mobile Responsive */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
               <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Deposit Funds</h2>
               <div className="flex flex-col space-y-4">
                 <p className="text-gray-600 dark:text-gray-300">
                   To add funds to your account, send Bitcoin to the following address:
                 </p>
-                <div className="flex items-center">
-                  <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-l-md flex-grow">
-                    <code className="text-sm font-mono break-all text-gray-800 dark:text-gray-200">
+                
+                {/* Mobile responsive address display and copy button */}
+                <div className="flex flex-col sm:flex-row w-full">
+                  <div className="bg-gray-100 dark:bg-gray-700 p-3 sm:p-4 rounded-t-md sm:rounded-l-md sm:rounded-tr-none w-full overflow-x-auto">
+                    <code className="text-xs sm:text-sm font-mono text-gray-800 dark:text-gray-200 whitespace-nowrap">
                       {walletAddress}
                     </code>
                   </div>
                   <Button 
-                    className="rounded-l-none" 
+                    className="w-full sm:w-auto rounded-b-md sm:rounded-l-none sm:rounded-r-md flex items-center justify-center" 
                     onClick={copyToClipboard}
+                    size="sm"
                   >
-                    {copied ? <Check size={20} /> : <Copy size={20} />}
-                    {copied ? "Copied" : "Copy"}
+                    {copied ? <Check className="mr-1" size={16} /> : <Copy className="mr-1" size={16} />}
+                    <span>{copied ? "Copied" : "Copy Address"}</span>
                   </Button>
                 </div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
