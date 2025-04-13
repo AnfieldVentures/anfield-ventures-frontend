@@ -100,9 +100,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
-  // Register function
+  // Register function with financial data initialization
   const register = async (name, email, password) => {
     try {
+      // Register the user
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -115,6 +116,44 @@ export const AuthProvider = ({ children }) => {
       
       if (error) {
         throw error;
+      }
+      
+      // Initialize financial data
+      if (data.user) {
+        try {
+          // Ensure profile exists with zero balance
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .upsert({
+              id: data.user.id,
+              name,
+              email,
+              account_balance: 0
+            });
+
+          if (profileError) {
+            console.error('Error creating profile:', profileError);
+          }
+          
+          // Add initial empty transaction (optional, for demo purposes)
+          const { error: transactionError } = await supabase
+            .from('transactions')
+            .insert({
+              user_id: data.user.id,
+              type: 'deposit',
+              amount: 0,
+              status: 'completed',
+              description: 'Account opened'
+            });
+            
+          if (transactionError) {
+            console.error('Error creating initial transaction:', transactionError);
+          }
+          
+        } catch (initError) {
+          console.error('Error initializing user data:', initError);
+          // Don't block registration if initialization fails
+        }
       }
       
       toast({

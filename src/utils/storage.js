@@ -68,6 +68,22 @@ export const getUserInvestments = async (userId) => {
   }
 };
 
+// Create a new investment
+export const createInvestment = async (investmentData) => {
+  try {
+    const { data, error } = await supabase
+      .from('investments')
+      .insert(investmentData)
+      .select();
+      
+    if (error) throw error;
+    return data[0];
+  } catch (error) {
+    console.error('Error creating investment:', error);
+    throw error;
+  }
+};
+
 // Transaction functions
 export const getUserTransactions = async (userId) => {
   try {
@@ -83,5 +99,38 @@ export const getUserTransactions = async (userId) => {
     console.error('Error fetching transactions:', error);
     // Return empty array as fallback
     return [];
+  }
+};
+
+// Create a new transaction
+export const createTransaction = async (transactionData) => {
+  try {
+    const { data, error } = await supabase
+      .from('transactions')
+      .insert(transactionData)
+      .select();
+      
+    if (error) throw error;
+    return data[0];
+  } catch (error) {
+    console.error('Error creating transaction:', error);
+    throw error;
+  }
+};
+
+// Update account balance
+export const updateAccountBalance = async (userId, newBalance) => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ account_balance: newBalance })
+      .eq('id', userId)
+      .select();
+      
+    if (error) throw error;
+    return data[0];
+  } catch (error) {
+    console.error('Error updating account balance:', error);
+    throw error;
   }
 };

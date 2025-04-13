@@ -5,51 +5,111 @@ import { getUserInvestments, getUserTransactions, getUserProfile } from '../util
 import { StatCard } from '../components/StatCard.jsx';
 import { TransactionList } from '../components/TransactionList.jsx';
 import { Wallet, TrendingUp, CreditCard } from 'lucide-react';
+import { supabase } from '../integrations/supabase/client.js';
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [investments, setInvestments] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [balance, setBalance] = useState(0);
   
-  useEffect(() => {
-    const fetchData = async () => {
-      if (user) {
-        setIsLoading(true);
-        
-        try {
-          // Fetch user profile to get account balance
-          const profile = await getUserProfile(user.id);
-          
-          // Fetch investments and transactions
-          const [userInvestments, userTransactions] = await Promise.all([
-            getUserInvestments(user.id),
-            getUserTransactions(user.id)
-          ]);
-          
-          setInvestments(userInvestments);
-          setTransactions(userTransactions);
-          setBalance(profile?.account_balance || 0); // Ensure balance starts at 0 if not set
-        } catch (error) {
-          console.error("Error fetching dashboard data:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
+  // Function to fetch all user data
+  const fetchUserData = async () => {
+    if (!user) return;
     
-    fetchData();
+    setIsLoading(true);
+    try {
+      // Get latest profile data for balance
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      // Fetch investments and transactions directly
+      const { data: investmentsData } = await supabase
+        .from('investments')
+        .select('*')
+        .eq('user_id', user.id);
+        
+      const { data: transactionsData } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false });
+      
+      // Update state with fetched data
+      if (profileData) {
+        setBalance(profileData.account_balance || 0);
+      }
+      
+      setInvestments(investmentsData || []);
+      setTransactions(transactionsData || []);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Set up real-time subscription for profile updates
+  useEffect(() => {
+    if (!user) return;
+    
+    // Initial data fetch
+    fetchUserData();
+    
+    // Set up real-time listeners for database changes
+    const profileChannel = supabase
+      .channel('profile-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${user.id}` }, 
+        () => {
+          console.log('Profile changed, refreshing data...');
+          fetchUserData();
+        }
+      )
+      .subscribe();
+      
+    const transactionsChannel = supabase
+      .channel('transactions-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'transactions', filter: `user_id=eq.${user.id}` }, 
+        () => {
+          console.log('Transactions changed, refreshing data...');
+          fetchUserData();
+        }
+      )
+      .subscribe();
+      
+    const investmentsChannel = supabase
+      .channel('investments-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'investments', filter: `user_id=eq.${user.id}` }, 
+        () => {
+          console.log('Investments changed, refreshing data...');
+          fetchUserData();
+        }
+      )
+      .subscribe();
+    
+    // Clean up subscriptions
+    return () => {
+      supabase.removeChannel(profileChannel);
+      supabase.removeChannel(transactionsChannel);
+      supabase.removeChannel(investmentsChannel);
+    };
   }, [user]);
 
   const calculateTotalInvestment = () => {
-    return investments.reduce((total, inv) => total + inv.amount, 0);
+    return investments.reduce((total, inv) => total + Number(inv.amount), 0);
   };
 
   const calculateTotalReturns = () => {
     return transactions
       .filter(t => t.type === 'return')
-      .reduce((total, t) => total + t.amount, 0);
+      .reduce((total, t) => total + Number(t.amount), 0);
   };
 
   const calculateActiveInvestments = () => {
