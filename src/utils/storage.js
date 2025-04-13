@@ -52,77 +52,36 @@ export const updateUserProfile = async (userId, updates) => {
 };
 
 // Investment functions
-export const getUserInvestments = (userId) => {
-  // For now, return mock data
-  // In a real implementation, this would use Supabase
-  return [
-    {
-      id: '1',
-      userId: userId,
-      plan: 'daily',
-      amount: 1000,
-      returnRate: 1.2,
-      startDate: new Date().toISOString(),
-      status: 'active'
-    },
-    {
-      id: '2',
-      userId: userId,
-      plan: 'weekly',
-      amount: 5000,
-      returnRate: 7.5,
-      startDate: new Date(Date.now() - 7*24*60*60*1000).toISOString(), // 1 week ago
-      status: 'active'
-    }
-  ];
+export const getUserInvestments = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from('investments')
+      .select('*')
+      .eq('user_id', userId);
+      
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching investments:', error);
+    // Return empty array as fallback
+    return [];
+  }
 };
 
 // Transaction functions
-export const getUserTransactions = (userId) => {
-  // For now, return mock data
-  // In a real implementation, this would use Supabase
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  const lastWeek = new Date(today);
-  lastWeek.setDate(lastWeek.getDate() - 7);
-  
-  return [
-    {
-      id: '1',
-      userId: userId,
-      type: 'deposit',
-      amount: 1000,
-      status: 'completed',
-      date: yesterday.toISOString(),
-      description: 'Initial deposit for daily plan'
-    },
-    {
-      id: '2',
-      userId: userId,
-      type: 'deposit',
-      amount: 5000,
-      status: 'completed',
-      date: lastWeek.toISOString(),
-      description: 'Initial deposit for weekly plan'
-    },
-    {
-      id: '3',
-      userId: userId,
-      type: 'return',
-      amount: 12,
-      status: 'completed',
-      date: today.toISOString(),
-      description: 'Daily return on investment'
-    },
-    {
-      id: '4',
-      userId: userId,
-      type: 'withdrawal',
-      amount: 100,
-      status: 'pending',
-      date: today.toISOString(),
-      description: 'Withdrawal request'
-    }
-  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+export const getUserTransactions = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('user_id', userId)
+      .order('date', { ascending: false });
+      
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    // Return empty array as fallback
+    return [];
+  }
 };
