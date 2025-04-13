@@ -4,8 +4,10 @@ import { useAuth } from '../contexts/AuthContext.jsx';
 import { getUserInvestments, getUserTransactions, getUserProfile } from '../utils/storage.js';
 import { StatCard } from '../components/StatCard.jsx';
 import { TransactionList } from '../components/TransactionList.jsx';
-import { Wallet, TrendingUp, CreditCard } from 'lucide-react';
+import { Wallet, TrendingUp, CreditCard, Copy, Check } from 'lucide-react';
 import { supabase } from '../integrations/supabase/client.js';
+import { Button } from "@/components/ui/button";
+import { useToast } from '../hooks/use-toast.js';
 
 const Dashboard = () => {
   const { user, profile } = useAuth();
@@ -13,6 +15,32 @@ const Dashboard = () => {
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [balance, setBalance] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
+  
+  const walletAddress = "bc1qqefp53svtcpayry7clxj0u85urp5qur5fz9uzs";
+  
+  // Function to copy wallet address to clipboard
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(walletAddress);
+      setCopied(true);
+      toast({
+        title: "Address copied!",
+        description: "Wallet address copied to clipboard.",
+      });
+      
+      // Reset the copied state after 2 seconds
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy: ", error);
+      toast({
+        variant: "destructive",
+        title: "Copy failed",
+        description: "Could not copy to clipboard.",
+      });
+    }
+  };
   
   // Function to fetch all user data
   const fetchUserData = async () => {
@@ -157,6 +185,33 @@ const Dashboard = () => {
                 description="Currently running plans"
                 icon={<CreditCard size={24} />}
               />
+            </div>
+            
+            {/* Deposit Button with Wallet Address */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+              <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Deposit Funds</h2>
+              <div className="flex flex-col space-y-4">
+                <p className="text-gray-600 dark:text-gray-300">
+                  To add funds to your account, send Bitcoin to the following address:
+                </p>
+                <div className="flex items-center">
+                  <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-l-md flex-grow">
+                    <code className="text-sm font-mono break-all text-gray-800 dark:text-gray-200">
+                      {walletAddress}
+                    </code>
+                  </div>
+                  <Button 
+                    className="rounded-l-none" 
+                    onClick={copyToClipboard}
+                  >
+                    {copied ? <Check size={20} /> : <Copy size={20} />}
+                    {copied ? "Copied" : "Copy"}
+                  </Button>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Funds will appear in your account after network confirmation.
+                </p>
+              </div>
             </div>
             
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
