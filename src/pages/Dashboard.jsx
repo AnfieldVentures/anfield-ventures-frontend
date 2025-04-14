@@ -1,10 +1,11 @@
+
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { supabase } from '../integrations/supabase/client.js';
 import { useToast } from '../hooks/use-toast.js';
 import { StatCard } from '../components/StatCard.jsx';
 import { TransactionList } from '../components/TransactionList.jsx';
-import { Wallet, TrendingUp, CreditCard, Copy, Check } from 'lucide-react';
+import { Wallet, TrendingUp, CreditCard, Copy, Check, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
@@ -60,41 +61,37 @@ const Dashboard = () => {
       setTransactions(transactionsData || []);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
+      toast({
+        variant: "destructive",
+        title: "Error loading data",
+        description: "Could not load your dashboard data. Please try again."
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Fetch data only once when the component mounts and when user changes
   useEffect(() => {
-    if (!user) return;
-
-    fetchUserData();
-
-    const profileChannel = supabase
-      .channel('profile-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${user.id}` }, fetchUserData)
-      .subscribe();
-
-    const transactionsChannel = supabase
-      .channel('transactions-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions', filter: `user_id=eq.${user.id}` }, fetchUserData)
-      .subscribe();
-
-    const investmentsChannel = supabase
-      .channel('investments-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'investments', filter: `user_id=eq.${user.id}` }, fetchUserData)
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(profileChannel);
-      supabase.removeChannel(transactionsChannel);
-      supabase.removeChannel(investmentsChannel);
-    };
+    if (user) {
+      fetchUserData();
+    }
   }, [user]);
 
   const calculateTotalInvestment = () => investments.reduce((sum, inv) => sum + Number(inv.amount), 0);
   const calculateTotalReturns = () => transactions.filter(t => t.type === 'return').reduce((sum, t) => sum + Number(t.amount), 0);
   const calculateActiveInvestments = () => investments.filter(inv => inv.status === 'active').length;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-gray-600 dark:text-gray-300">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -114,7 +111,20 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        <TransactionList transactions={transactions} />
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-4">Recent Transactions</h2>
+          <TransactionList transactions={transactions} />
+          {transactions.length === 0 && (
+            <p className="text-gray-500 dark:text-gray-400 text-center py-4">No transactions found</p>
+          )}
+        </div>
+
+        <div className="flex justify-end">
+          <Button onClick={fetchUserData} variant="outline" className="flex items-center gap-2">
+            <Loader2 className={isLoading ? "h-4 w-4 animate-spin" : "h-4 w-4"} />
+            Refresh Data
+          </Button>
+        </div>
       </div>
     </div>
   );
