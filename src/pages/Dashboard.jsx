@@ -68,11 +68,10 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!user) return;
-
-    // Check if data is already loaded to prevent unnecessary fetching
-    if (investments.length === 0 || transactions.length === 0 || balance === 0) {
-      fetchUserData();
-    }
+    
+    // Key fix: Remove the conditional that causes re-fetching
+    // This was causing a continuous loading state
+    fetchUserData();
 
     const profileChannel = supabase
       .channel('profile-changes')
@@ -94,7 +93,7 @@ const Dashboard = () => {
       supabase.removeChannel(transactionsChannel);
       supabase.removeChannel(investmentsChannel);
     };
-  }, [user, investments, transactions, balance]);
+  }, [user]); // Remove other dependencies that were causing re-renders
 
   const calculateTotalInvestment = () => investments.reduce((sum, inv) => sum + Number(inv.amount), 0);
   const calculateTotalReturns = () => transactions.filter(t => t.type === 'return').reduce((sum, t) => sum + Number(t.amount), 0);
@@ -104,21 +103,32 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Dashboard</h1>
+        
+        {isLoading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-anfield-primary"></div>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <StatCard title="Account Balance" value={`$${balance.toFixed(2)}`} icon={<Wallet />} />
+              <StatCard title="Total Investment" value={`$${calculateTotalInvestment().toFixed(2)}`} icon={<TrendingUp />} />
+              <StatCard title="Total Returns" value={`$${calculateTotalReturns().toFixed(2)}`} icon={<CreditCard />} />
+            </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <StatCard title="Account Balance" value={`$${balance.toFixed(2)}`} icon={<Wallet />} />
-          <StatCard title="Total Investment" value={`$${calculateTotalInvestment().toFixed(2)}`} icon={<TrendingUp />} />
-          <StatCard title="Total Returns" value={`$${calculateTotalReturns().toFixed(2)}`} icon={<CreditCard />} />
-        </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+              <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md overflow-hidden text-ellipsis max-w-full">
+                <span className="font-mono text-sm truncate">{walletAddress}</span>
+              </div>
+              <Button onClick={copyToClipboard} className="flex items-center gap-2 whitespace-nowrap">
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+                {copied ? "Copied" : "Copy Wallet Address"}
+              </Button>
+            </div>
 
-        <div className="flex items-center space-x-2 mb-6">
-          <Button onClick={copyToClipboard} className="flex items-center gap-2">
-            {copied ? <Check size={16} /> : <Copy size={16} />}
-            {copied ? "Copied" : "Copy Wallet Address"}
-          </Button>
-        </div>
-
-        <TransactionList transactions={transactions} />
+            <TransactionList transactions={transactions} />
+          </>
+        )}
       </div>
     </div>
   );
