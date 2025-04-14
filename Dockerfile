@@ -1,33 +1,36 @@
-
-# Use Node.js as the base image
-FROM node:20-alpine as build
+# Stage 1: Build the app
+FROM node:20-alpine AS build
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy dependencies manifest
 COPY package*.json ./
 
 # Install dependencies
 RUN npm ci
 
-# Copy the rest of the application
+# Copy the rest of the app
 COPY . .
 
-# Build the application
+# Build the app (outputs to /app/dist)
 RUN npm run build
 
-# Use Nginx to serve the application
+
+# Stage 2: Serve with Nginx
 FROM nginx:stable-alpine
 
-# Copy built files from the build stage
+# Remove default nginx website
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy build output to Nginx's html directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy custom nginx config if needed
-# COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+# Optional: Add custom Nginx config for SPA routing
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80
+# Expose port
 EXPOSE 80
 
-# Start Nginx
+# Run Nginx in foreground
 CMD ["nginx", "-g", "daemon off;"]
