@@ -66,13 +66,11 @@ const Dashboard = () => {
     }
   };
 
-  // Only run once when component mounts or user changes
   useEffect(() => {
     if (!user) return;
-    
+
     fetchUserData();
-    
-    // Set up real-time subscriptions
+
     const profileChannel = supabase
       .channel('profile-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${user.id}` }, fetchUserData)
@@ -88,13 +86,12 @@ const Dashboard = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'investments', filter: `user_id=eq.${user.id}` }, fetchUserData)
       .subscribe();
 
-    // Clean up on unmount
     return () => {
       supabase.removeChannel(profileChannel);
       supabase.removeChannel(transactionsChannel);
       supabase.removeChannel(investmentsChannel);
     };
-  }, [user]); // Only depend on user
+  }, [user]);
 
   const calculateTotalInvestment = () => investments.reduce((sum, inv) => sum + Number(inv.amount), 0);
   const calculateTotalReturns = () => transactions.filter(t => t.type === 'return').reduce((sum, t) => sum + Number(t.amount), 0);
@@ -104,7 +101,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Dashboard</h1>
-        
+
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-anfield-primary"></div>
