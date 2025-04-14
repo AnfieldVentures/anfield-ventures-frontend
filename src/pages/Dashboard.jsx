@@ -66,13 +66,13 @@ const Dashboard = () => {
     }
   };
 
+  // Only run once when component mounts or user changes
   useEffect(() => {
     if (!user) return;
     
-    // Key fix: Remove the conditional that causes re-fetching
-    // This was causing a continuous loading state
     fetchUserData();
-
+    
+    // Set up real-time subscriptions
     const profileChannel = supabase
       .channel('profile-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${user.id}` }, fetchUserData)
@@ -88,12 +88,13 @@ const Dashboard = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'investments', filter: `user_id=eq.${user.id}` }, fetchUserData)
       .subscribe();
 
+    // Clean up on unmount
     return () => {
       supabase.removeChannel(profileChannel);
       supabase.removeChannel(transactionsChannel);
       supabase.removeChannel(investmentsChannel);
     };
-  }, [user]); // Remove other dependencies that were causing re-renders
+  }, [user]); // Only depend on user
 
   const calculateTotalInvestment = () => investments.reduce((sum, inv) => sum + Number(inv.amount), 0);
   const calculateTotalReturns = () => transactions.filter(t => t.type === 'return').reduce((sum, t) => sum + Number(t.amount), 0);
