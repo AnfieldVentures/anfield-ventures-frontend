@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getTheme, setTheme as setStorageTheme } from '../utils/storage.js';
 
 const ThemeContext = createContext(undefined);
