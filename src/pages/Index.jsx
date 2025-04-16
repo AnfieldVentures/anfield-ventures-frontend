@@ -267,7 +267,7 @@ const Index = () => {
                   <span className="text-anfield-primary font-semibold">JD</span>
                 </div>
                 <div className="ml-3">
-                  <h4 className="font-medium">John Doe</h4>
+                  <h4 className="font-medium">James Brown</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Investor since 2022</p>
                 </div>
               </div>
@@ -299,7 +299,7 @@ const Index = () => {
                   <span className="text-anfield-primary font-semibold">SJ</span>
                 </div>
                 <div className="ml-3">
-                  <h4 className="font-medium">Sarah Johnson</h4>
+                  <h4 className="font-medium">Linda Smith</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Investor since 2023</p>
                 </div>
               </div>
@@ -331,7 +331,7 @@ const Index = () => {
                   <span className="text-anfield-primary font-semibold">RM</span>
                 </div>
                 <div className="ml-3">
-                  <h4 className="font-medium">Robert Miller</h4>
+                  <h4 className="font-medium">James Rodriguez</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Investor since 2021</p>
                 </div>
               </div>
