@@ -47,11 +47,11 @@ const Index = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span>Daily Return</span>
-                    <span className="font-bold">1.2% - 1.5%</span>
+                    <span className="font-bold">10% - 15%</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span>Weekly Return</span>
-                    <span className="font-bold">7.5% - 10%</span>
+                    <span className="font-bold">25% - 30%</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span>Min Investment</span>
@@ -154,7 +154,7 @@ const Index = () => {
               </div>
               <div className="p-6">
                 <div className="mb-6">
-                  <p className="text-3xl font-bold mb-2">1.2% - 1.5%</p>
+                  <p className="text-3xl font-bold mb-2">10% - 15%</p>
                   <p className="text-gray-600 dark:text-gray-400">Daily Return</p>
                 </div>
                 <div className="space-y-3 mb-6">
@@ -188,7 +188,7 @@ const Index = () => {
               </div>
               <div className="p-6">
                 <div className="mb-6">
-                  <p className="text-3xl font-bold mb-2">7.5% - 10%</p>
+                  <p className="text-3xl font-bold mb-2">25% - 30%</p>
                   <p className="text-gray-600 dark:text-gray-400">Weekly Return</p>
                 </div>
                 <div className="space-y-3 mb-6">

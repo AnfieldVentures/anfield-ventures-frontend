@@ -1,4 +1,3 @@
-
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 import { Button } from "@/components/ui/button";
@@ -42,7 +41,7 @@ const Plans = () => {
               <div className="p-6 bg-anfield-primary text-white">
                 <h3 className="text-xl font-bold mb-2">Starter Plan</h3>
                 <div className="flex items-end">
-                  <span className="text-3xl font-bold">1.2%</span>
+                  <span className="text-3xl font-bold">10%</span>
                   <span className="ml-1 opacity-90">Daily</span>
                 </div>
                 <p className="opacity-90 mt-2">For new investors</p>
@@ -63,7 +62,7 @@ const Plans = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>Total Return</span>
-                    <span className="font-bold text-green-600 dark:text-green-400">~36%</span>
+                    <span className="font-bold text-green-600 dark:text-green-400">~300%</span>
                   </div>
                 </div>
                 
@@ -100,7 +99,7 @@ const Plans = () => {
               <div className="p-6 bg-anfield-secondary text-white">
                 <h3 className="text-xl font-bold mb-2">Professional Plan</h3>
                 <div className="flex items-end">
-                  <span className="text-3xl font-bold">7.5%</span>
+                  <span className="text-3xl font-bold">25%</span>
                   <span className="ml-1 opacity-90">Weekly</span>
                 </div>
                 <p className="opacity-90 mt-2">For serious investors</p>
@@ -121,7 +120,7 @@ const Plans = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>Total Return</span>
-                    <span className="font-bold text-green-600 dark:text-green-400">~90%</span>
+                    <span className="font-bold text-green-600 dark:text-green-400">~300%</span>
                   </div>
                 </div>
                 
@@ -155,7 +154,7 @@ const Plans = () => {
               <div className="p-6 bg-anfield-primary text-white">
                 <h3 className="text-xl font-bold mb-2">Enterprise Plan</h3>
                 <div className="flex items-end">
-                  <span className="text-3xl font-bold">1.5%</span>
+                  <span className="text-3xl font-bold">15%</span>
                   <span className="ml-1 opacity-90">Daily</span>
                 </div>
                 <p className="opacity-90 mt-2">For high-volume investors</p>
@@ -176,7 +175,7 @@ const Plans = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>Total Return</span>
-                    <span className="font-bold text-green-600 dark:text-green-400">~45%</span>
+                    <span className="font-bold text-green-600 dark:text-green-400">~450%</span>
                   </div>
                 </div>
                 
@@ -221,7 +220,7 @@ const Plans = () => {
           <div className="bg-white dark:bg-gray-900 shadow-lg rounded-lg p-8 max-w-3xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-xl font-bold mb-6">Starter Plan (Daily 1.2%)</h3>
+                <h3 className="text-xl font-bold mb-6">Starter Plan (Daily 10%)</h3>
                 <table className="w-full">
                   <thead className="border-b dark:border-gray-700">
                     <tr>
@@ -232,22 +231,22 @@ const Plans = () => {
                   <tbody>
                     <tr className="border-b dark:border-gray-700">
                       <td className="py-2">$100</td>
-                      <td className="py-2 text-green-600 dark:text-green-400">$36.00</td>
+                      <td className="py-2 text-green-600 dark:text-green-400">$300.00</td>
                     </tr>
                     <tr className="border-b dark:border-gray-700">
                       <td className="py-2">$500</td>
-                      <td className="py-2 text-green-600 dark:text-green-400">$180.00</td>
+                      <td className="py-2 text-green-600 dark:text-green-400">$1,500.00</td>
                     </tr>
                     <tr>
                       <td className="py-2">$1,000</td>
-                      <td className="py-2 text-green-600 dark:text-green-400">$360.00</td>
+                      <td className="py-2 text-green-600 dark:text-green-400">$3,000.00</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               
               <div>
-                <h3 className="text-xl font-bold mb-6">Professional Plan (Weekly 7.5%)</h3>
+                <h3 className="text-xl font-bold mb-6">Professional Plan (Weekly 25%)</h3>
                 <table className="w-full">
                   <thead className="border-b dark:border-gray-700">
                     <tr>
@@ -258,15 +257,15 @@ const Plans = () => {
                   <tbody>
                     <tr className="border-b dark:border-gray-700">
                       <td className="py-2">$500</td>
-                      <td className="py-2 text-green-600 dark:text-green-400">$450.00</td>
+                      <td className="py-2 text-green-600 dark:text-green-400">$1,500.00</td>
                     </tr>
                     <tr className="border-b dark:border-gray-700">
                       <td className="py-2">$1,000</td>
-                      <td className="py-2 text-green-600 dark:text-green-400">$900.00</td>
+                      <td className="py-2 text-green-600 dark:text-green-400">$3,000.00</td>
                     </tr>
                     <tr>
                       <td className="py-2">$5,000</td>
-                      <td className="py-2 text-green-600 dark:text-green-400">$4,500.00</td>
+                      <td className="py-2 text-green-600 dark:text-green-400">$15,000.00</td>
                     </tr>
                   </tbody>
                 </table>

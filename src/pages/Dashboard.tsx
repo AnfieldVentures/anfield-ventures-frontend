@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
@@ -221,7 +222,7 @@ const Dashboard = () => {
                         <div className="flex justify-between">
                           <div>
                             <p className="font-medium">Daily Returns</p>
-                            <p className="text-2xl font-bold text-anfield-primary dark:text-anfield-accent">1.2%</p>
+                            <p className="text-2xl font-bold text-anfield-primary dark:text-anfield-accent">10% - 15%</p>
                           </div>
                           <DollarSign className="h-10 w-10 text-anfield-primary dark:text-anfield-accent opacity-80" />
                         </div>
@@ -236,7 +237,7 @@ const Dashboard = () => {
                           </div>
                           <div className="flex items-center">
                             <TrendingUp className="h-4 w-4 mr-2 text-gray-500" />
-                            <span>Total Return: ~36%</span>
+                            <span>Total Return: ~300%</span>
                           </div>
                         </div>
                         <Button className="w-full">Invest Now</Button>
@@ -247,7 +248,7 @@ const Dashboard = () => {
                         <div className="flex justify-between">
                           <div>
                             <p className="font-medium">Weekly Returns</p>
-                            <p className="text-2xl font-bold text-anfield-secondary dark:text-anfield-secondary">7.5%</p>
+                            <p className="text-2xl font-bold text-anfield-secondary dark:text-anfield-secondary">25% - 30%</p>
                           </div>
                           <DollarSign className="h-10 w-10 text-anfield-secondary opacity-80" />
                         </div>
@@ -262,7 +263,7 @@ const Dashboard = () => {
                           </div>
                           <div className="flex items-center">
                             <TrendingUp className="h-4 w-4 mr-2 text-gray-500" />
-                            <span>Total Return: ~90%</span>
+                            <span>Total Return: ~300%</span>
                           </div>
                         </div>
                         <Button className="w-full">Invest Now</Button>
