@@ -97,20 +97,13 @@ const Dashboard = () => {
     }
   };
 
-  // Helper function to create a transaction with valid status values
+  // Helper function to create a transaction without status validation
   const createTransaction = async (transactionData) => {
-    // Ensure status is one of the allowed values (pending, completed, failed)
-    const validStatuses = ['pending', 'completed', 'failed'];
-    const status = validStatuses.includes(transactionData.status) 
-      ? transactionData.status 
-      : 'pending'; // Default to 'pending' if invalid status is provided
-    
     try {
       const { data, error } = await supabase
         .from('transactions')
         .insert({
           ...transactionData,
-          status,
           user_id: user.id,
           date: new Date().toISOString()
         })

@@ -89,7 +89,7 @@ export type Database = {
           date?: string
           description?: string | null
           id?: string
-          status?: string
+          status: string
           type: string
           user_id: string
         }
