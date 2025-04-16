@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { supabase } from '../integrations/supabase/client.js';
 import { useToast } from '../hooks/use-toast.js';
@@ -9,7 +8,7 @@ import { Wallet, TrendingUp, CreditCard, Copy, Check, Loader2 } from 'lucide-rea
 import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
-  const { user, profile } = useAuth();
+ const { user, isLoading: isAuthLoading } = useAuth();
   const [investments, setInvestments] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
@@ -31,10 +30,17 @@ const Dashboard = () => {
     }
   };
 
+  const dataFetchedRef = useRef(false);
+
   const fetchUserData = async () => {
-    if (!user) return;
+    console.log('fetchUserData called');
+    if (!user) {
+      console.log('No user found, returning early');
+      return;
+    }
 
     setIsLoading(true);
+    console.log('Set isLoading to true');
     try {
       const { data: profileData } = await supabase
         .from('profiles')
@@ -42,41 +48,56 @@ const Dashboard = () => {
         .eq('id', user.id)
         .single();
 
-      const { data: investmentsData } = await supabase
-        .from('investments')
-        .select('*')
-        .eq('user_id', user.id);
+      console.log('Profile data fetched:', profileData);
 
-      const { data: transactionsData } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('date', { ascending: false });
+      // const { data: investmentsData } = await supabase
+      //   .from('investments')
+      //   .select('*')
+      //   .eq('user_id', user.id);
+
+      // const { data: transactionsData } = await supabase
+      //   .from('transactions')
+      //   .select('*')
+      //   .eq('user_id', user.id)
+      //   .order('date', { ascending: false });
 
       if (profileData) {
         setBalance(profileData.account_balance || 0);
+        console.log('Balance set to:', profileData.account_balance || 0);
       }
 
-      setInvestments(investmentsData || []);
-      setTransactions(transactionsData || []);
+      setInvestments(0 || []);
+      setTransactions(0 || []);
+      console.log('Investments and transactions set');
     } catch (error) {
-      console.error("Error fetching dashboard data:", error);
+      console.error('Error fetching dashboard data:', error);
       toast({
-        variant: "destructive",
-        title: "Error loading data",
-        description: "Could not load your dashboard data. Please try again."
+        variant: 'destructive',
+        title: 'Error loading data',
+        description: 'Could not load your dashboard data. Please try again.'
       });
     } finally {
       setIsLoading(false);
+      console.log('Set isLoading to false');
     }
   };
 
   // Fetch data only once when the component mounts and when user changes
-  useEffect(() => {
-    if (user) {
+useEffect(() => {
+    console.log('Auth Loading:', isAuthLoading);
+    console.log('User:', user);
+    // Only try to fetch data after the auth context is done loading
+    if (!isAuthLoading && user && !dataFetchedRef.current) {
       fetchUserData();
+      dataFetchedRef.current = true;
+    } else if (!user) {
+      setIsLoading(false);
     }
-  }, [user]);
+  }, [user, isAuthLoading]);
+
+  useEffect(() => {
+    console.log('Is Loading:', isLoading);
+  }, [isLoading]);
 
   const calculateTotalInvestment = () => investments.reduce((sum, inv) => sum + Number(inv.amount), 0);
   const calculateTotalReturns = () => transactions.filter(t => t.type === 'return').reduce((sum, t) => sum + Number(t.amount), 0);
