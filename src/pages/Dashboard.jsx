@@ -97,6 +97,44 @@ const Dashboard = () => {
     }
   };
 
+  // Helper function to create a transaction with valid status values
+  const createTransaction = async (transactionData) => {
+    // Ensure status is one of the allowed values (pending, completed, failed)
+    const validStatuses = ['pending', 'completed', 'failed'];
+    const status = validStatuses.includes(transactionData.status) 
+      ? transactionData.status 
+      : 'pending'; // Default to 'pending' if invalid status is provided
+    
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert({
+          ...transactionData,
+          status,
+          user_id: user.id,
+          date: new Date().toISOString()
+        })
+        .select();
+
+      if (error) {
+        console.error('Error creating transaction:', error);
+        throw error;
+      }
+
+      // Refresh dashboard data after transaction is created
+      fetchUserData();
+      return data;
+    } catch (error) {
+      console.error('Failed to create transaction:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Transaction failed',
+        description: error.message || 'Could not create transaction. Please try again.'
+      });
+      throw error;
+    }
+  };
+
   // Fetch data when component mounts and when user changes
   useEffect(() => {
     console.log('Auth Loading:', isAuthLoading);
